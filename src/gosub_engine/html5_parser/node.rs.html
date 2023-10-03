@@ -725,37 +725,6 @@
 <a href="#725" id="725">725</a>
 <a href="#726" id="726">726</a>
 <a href="#727" id="727">727</a>
-<a href="#728" id="728">728</a>
-<a href="#729" id="729">729</a>
-<a href="#730" id="730">730</a>
-<a href="#731" id="731">731</a>
-<a href="#732" id="732">732</a>
-<a href="#733" id="733">733</a>
-<a href="#734" id="734">734</a>
-<a href="#735" id="735">735</a>
-<a href="#736" id="736">736</a>
-<a href="#737" id="737">737</a>
-<a href="#738" id="738">738</a>
-<a href="#739" id="739">739</a>
-<a href="#740" id="740">740</a>
-<a href="#741" id="741">741</a>
-<a href="#742" id="742">742</a>
-<a href="#743" id="743">743</a>
-<a href="#744" id="744">744</a>
-<a href="#745" id="745">745</a>
-<a href="#746" id="746">746</a>
-<a href="#747" id="747">747</a>
-<a href="#748" id="748">748</a>
-<a href="#749" id="749">749</a>
-<a href="#750" id="750">750</a>
-<a href="#751" id="751">751</a>
-<a href="#752" id="752">752</a>
-<a href="#753" id="753">753</a>
-<a href="#754" id="754">754</a>
-<a href="#755" id="755">755</a>
-<a href="#756" id="756">756</a>
-<a href="#757" id="757">757</a>
-<a href="#758" id="758">758</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>std::collections::HashMap;
 
 <span class="kw">pub const </span>HTML_NAMESPACE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;http://www.w3.org/1999/xhtml&quot;</span>;
@@ -948,13 +917,13 @@
     </span>}
 
     <span class="doccomment">/// Check if an attribute exists
-    </span><span class="kw">pub fn </span>contains_attribute(<span class="kw-2">&amp;</span><span class="self">self</span>, name: String) -&gt; <span class="prelude-ty">Result</span>&lt;bool, String&gt; {
+    </span><span class="kw">pub fn </span>contains_attribute(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;bool, String&gt; {
         <span class="kw">if </span><span class="self">self</span>.type_of() != NodeType::Element {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(String::from(ATTRIBUTE_NODETYPE_ERR_MSG));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ATTRIBUTE_NODETYPE_ERR_MSG.into());
         }
 
         <span class="kw">let </span>contains: bool = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.data {
-            NodeData::Element { attributes, .. } =&gt; attributes.contains_key(<span class="kw-2">&amp;</span>name),
+            NodeData::Element { attributes, .. } =&gt; attributes.contains_key(name),
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         };
 
@@ -962,26 +931,26 @@
     }
 
     <span class="doccomment">/// Add or update a an attribute
-    </span><span class="kw">pub fn </span>insert_attribute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: String, value: String) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
+    </span><span class="kw">pub fn </span>insert_attribute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str, value: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
         <span class="kw">if </span><span class="self">self</span>.type_of() != NodeType::Element {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(String::from(ATTRIBUTE_NODETYPE_ERR_MSG));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ATTRIBUTE_NODETYPE_ERR_MSG.into());
         }
 
         <span class="kw">if let </span>NodeData::Element { attributes, .. } = <span class="kw-2">&amp;mut </span><span class="self">self</span>.data {
-            attributes.insert(name, value);
+            attributes.insert(name.to_owned(), value.to_owned());
         }
 
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Remove an attribute. If attribute doesn&#39;t exist, nothing happens.
-    </span><span class="kw">pub fn </span>remove_attribute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: String) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
+    </span><span class="kw">pub fn </span>remove_attribute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(), String&gt; {
         <span class="kw">if </span><span class="self">self</span>.type_of() != NodeType::Element {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(String::from(ATTRIBUTE_NODETYPE_ERR_MSG));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ATTRIBUTE_NODETYPE_ERR_MSG.into());
         }
 
         <span class="kw">if let </span>NodeData::Element { attributes, .. } = <span class="kw-2">&amp;mut </span><span class="self">self</span>.data {
-            attributes.remove(<span class="kw-2">&amp;</span>name);
+            attributes.remove(name);
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -989,14 +958,14 @@
 
     <span class="doccomment">/// Get a constant reference to the attribute value
     /// (or None if attribute doesn&#39;t exist)
-    </span><span class="kw">pub fn </span>get_attribute(<span class="kw-2">&amp;</span><span class="self">self</span>, name: String) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt;, String&gt; {
+    </span><span class="kw">pub fn </span>get_attribute(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt;, String&gt; {
         <span class="kw">if </span><span class="self">self</span>.type_of() != NodeType::Element {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(String::from(ATTRIBUTE_NODETYPE_ERR_MSG));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ATTRIBUTE_NODETYPE_ERR_MSG.into());
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>String&gt; = <span class="prelude-val">None</span>;
         <span class="kw">if let </span>NodeData::Element { attributes, .. } = <span class="kw-2">&amp;</span><span class="self">self</span>.data {
-            value = attributes.get(<span class="kw-2">&amp;</span>name);
+            value = attributes.get(name);
         }
 
         <span class="prelude-val">Ok</span>(value)
@@ -1004,14 +973,14 @@
 
     <span class="doccomment">/// Get a mutable reference to the attribute value
     /// (or None if the attribute doesn&#39;t exist)
-    </span><span class="kw">pub fn </span>get_mut_attribute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: String) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>String&gt;, String&gt; {
+    </span><span class="kw">pub fn </span>get_mut_attribute(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>String&gt;, String&gt; {
         <span class="kw">if </span><span class="self">self</span>.type_of() != NodeType::Element {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(String::from(ATTRIBUTE_NODETYPE_ERR_MSG));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ATTRIBUTE_NODETYPE_ERR_MSG.into());
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>value: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>String&gt; = <span class="prelude-val">None</span>;
         <span class="kw">if let </span>NodeData::Element { attributes, .. } = <span class="kw-2">&amp;mut </span><span class="self">self</span>.data {
-            value = attributes.get_mut(<span class="kw-2">&amp;</span>name);
+            value = attributes.get_mut(name);
         }
 
         <span class="prelude-val">Ok</span>(value)
@@ -1152,11 +1121,11 @@
 <span class="kw">pub static </span>SPECIAL_SVG_ELEMENTS: [<span class="kw-2">&amp;</span>str; <span class="number">3</span>] = [<span class="string">&quot;foreignObject&quot;</span>, <span class="string">&quot;desc&quot;</span>, <span class="string">&quot;title&quot;</span>];
 
 <span class="attr">#[cfg(test)]
-</span><span class="kw">mod </span>test {
+</span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_new_document() {
+    </span><span class="kw">fn </span>new_document() {
         <span class="kw">let </span>node = Node::new_document();
         <span class="macro">assert_eq!</span>(node.id, NodeId::default());
         <span class="macro">assert_eq!</span>(node.parent, <span class="prelude-val">None</span>);
@@ -1167,7 +1136,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_new_element() {
+    </span><span class="kw">fn </span>new_element() {
         <span class="kw">let </span><span class="kw-2">mut </span>attributes = HashMap::new();
         attributes.insert(<span class="string">&quot;id&quot;</span>.to_string(), <span class="string">&quot;test&quot;</span>.to_string());
         <span class="kw">let </span>node = Node::new_element(<span class="string">&quot;div&quot;</span>, attributes.clone(), HTML_NAMESPACE);
@@ -1186,7 +1155,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_new_comment() {
+    </span><span class="kw">fn </span>new_comment() {
         <span class="kw">let </span>node = Node::new_comment(<span class="string">&quot;test&quot;</span>);
         <span class="macro">assert_eq!</span>(node.id, NodeId::default());
         <span class="macro">assert_eq!</span>(node.parent, <span class="prelude-val">None</span>);
@@ -1202,7 +1171,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_new_text() {
+    </span><span class="kw">fn </span>new_text() {
         <span class="kw">let </span>node = Node::new_text(<span class="string">&quot;test&quot;</span>);
         <span class="macro">assert_eq!</span>(node.id, NodeId::default());
         <span class="macro">assert_eq!</span>(node.parent, <span class="prelude-val">None</span>);
@@ -1218,7 +1187,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_is_special() {
+    </span><span class="kw">fn </span>is_special() {
         <span class="kw">let </span><span class="kw-2">mut </span>attributes = HashMap::new();
         attributes.insert(<span class="string">&quot;id&quot;</span>.to_string(), <span class="string">&quot;test&quot;</span>.to_string());
         <span class="kw">let </span>node = Node::new_element(<span class="string">&quot;div&quot;</span>, attributes, HTML_NAMESPACE);
@@ -1226,7 +1195,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_type_of() {
+    </span><span class="kw">fn </span>type_of() {
         <span class="kw">let </span>node = Node::new_document();
         <span class="macro">assert_eq!</span>(node.type_of(), NodeType::Document);
         <span class="kw">let </span>node = Node::new_text(<span class="string">&quot;test&quot;</span>);
@@ -1240,7 +1209,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_special_html_elements() {
+    </span><span class="kw">fn </span>special_html_elements() {
         <span class="kw">for </span>element <span class="kw">in </span>SPECIAL_HTML_ELEMENTS.iter() {
             <span class="kw">let </span><span class="kw-2">mut </span>attributes = HashMap::new();
             attributes.insert(<span class="string">&quot;id&quot;</span>.to_string(), <span class="string">&quot;test&quot;</span>.to_string());
@@ -1250,7 +1219,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_special_mathml_elements() {
+    </span><span class="kw">fn </span>special_mathml_elements() {
         <span class="kw">for </span>element <span class="kw">in </span>SPECIAL_MATHML_ELEMENTS.iter() {
             <span class="kw">let </span><span class="kw-2">mut </span>attributes = HashMap::new();
             attributes.insert(<span class="string">&quot;id&quot;</span>.to_string(), <span class="string">&quot;test&quot;</span>.to_string());
@@ -1260,7 +1229,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_special_svg_elements() {
+    </span><span class="kw">fn </span>special_svg_elements() {
         <span class="kw">for </span>element <span class="kw">in </span>SPECIAL_SVG_ELEMENTS.iter() {
             <span class="kw">let </span><span class="kw-2">mut </span>attributes = HashMap::new();
             attributes.insert(<span class="string">&quot;id&quot;</span>.to_string(), <span class="string">&quot;test&quot;</span>.to_string());
@@ -1270,7 +1239,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_type_of_node() {
+    </span><span class="kw">fn </span>type_of_node() {
         <span class="kw">let </span>node = Node::new_document();
         <span class="macro">assert_eq!</span>(node.type_of(), NodeType::Document);
         <span class="kw">let </span>node = Node::new_text(<span class="string">&quot;test&quot;</span>);
@@ -1284,7 +1253,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_type_of_node_data() {
+    </span><span class="kw">fn </span>type_of_node_data() {
         <span class="kw">let </span>node = Node::new_document();
         <span class="macro">assert_eq!</span>(node.data, NodeData::Document {});
         <span class="kw">let </span>node = Node::new_text(<span class="string">&quot;test&quot;</span>);
@@ -1314,7 +1283,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_type_of_node_data_element() {
+    </span><span class="kw">fn </span>type_of_node_data_element() {
         <span class="kw">let </span><span class="kw-2">mut </span>attributes = HashMap::new();
         attributes.insert(<span class="string">&quot;id&quot;</span>.to_string(), <span class="string">&quot;test&quot;</span>.to_string());
         <span class="kw">let </span>node = Node::new_element(<span class="string">&quot;div&quot;</span>, attributes.clone(), HTML_NAMESPACE);
@@ -1328,7 +1297,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_type_of_node_data_text() {
+    </span><span class="kw">fn </span>type_of_node_data_text() {
         <span class="kw">let </span>node = Node::new_text(<span class="string">&quot;test&quot;</span>);
         <span class="macro">assert_eq!</span>(
             node.data,
@@ -1339,7 +1308,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_type_of_node_data_comment() {
+    </span><span class="kw">fn </span>type_of_node_data_comment() {
         <span class="kw">let </span>node = Node::new_comment(<span class="string">&quot;test&quot;</span>);
         <span class="macro">assert_eq!</span>(
             node.data,
@@ -1350,168 +1319,137 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_type_of_node_data_document() {
+    </span><span class="kw">fn </span>type_of_node_data_document() {
         <span class="kw">let </span>node = Node::new_document();
         <span class="macro">assert_eq!</span>(node.data, NodeData::Document {});
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_contains_attribute_non_element() {
+    </span><span class="kw">fn </span>contains_attribute_non_element() {
         <span class="kw">let </span>node = Node::new_document();
-        <span class="kw">let </span>result = node.contains_attribute(<span class="string">&quot;x&quot;</span>.to_string());
+        <span class="kw">let </span>result = node.contains_attribute(<span class="string">&quot;x&quot;</span>);
         <span class="macro">assert!</span>(result.is_err())
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_contains_attribute() {
+    </span><span class="kw">fn </span>contains_attribute() {
         <span class="kw">let </span><span class="kw-2">mut </span>attr = HashMap::new();
         attr.insert(<span class="string">&quot;x&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string());
 
         <span class="kw">let </span>node = Node::new_element(<span class="string">&quot;node&quot;</span>, attr.clone(), HTML_NAMESPACE);
 
-        <span class="kw">match </span>node.contains_attribute(<span class="string">&quot;x&quot;</span>.to_string()) {
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">assert!</span>(<span class="bool-val">false</span>),
-            <span class="prelude-val">Ok</span>(result) =&gt; {
-                <span class="macro">assert_eq!</span>(result, <span class="bool-val">true</span>);
-            }
-        }
-
-        <span class="kw">match </span>node.contains_attribute(<span class="string">&quot;z&quot;</span>.to_string()) {
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">assert!</span>(<span class="bool-val">false</span>),
-            <span class="prelude-val">Ok</span>(result) =&gt; {
-                <span class="macro">assert_eq!</span>(result, <span class="bool-val">false</span>);
-            }
-        }
+        <span class="macro">assert!</span>(node.contains_attribute(<span class="string">&quot;x&quot;</span>).unwrap());
+        <span class="macro">assert!</span>(!node.contains_attribute(<span class="string">&quot;z&quot;</span>).unwrap());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_insert_attrubte_non_element() {
+    </span><span class="kw">fn </span>insert_attrubte_non_element() {
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_document();
-        <span class="kw">let </span>result = node.insert_attribute(<span class="string">&quot;name&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string());
+        <span class="kw">let </span>result = node.insert_attribute(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;value&quot;</span>);
         <span class="macro">assert!</span>(result.is_err());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_insert_attribute() {
+    </span><span class="kw">fn </span>insert_attribute() {
         <span class="kw">let </span>attr = HashMap::new();
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_element(<span class="string">&quot;name&quot;</span>, attr.clone(), HTML_NAMESPACE);
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw">_</span>) = node.insert_attribute(<span class="string">&quot;key&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string()) {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(value) = node.get_attribute(<span class="string">&quot;key&quot;</span>.to_string()) {
-                <span class="kw">match </span>value {
-                    <span class="prelude-val">None </span>=&gt; <span class="macro">assert!</span>(<span class="bool-val">false</span>),
-                    <span class="prelude-val">Some</span>(val) =&gt; <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>val, <span class="string">&quot;value&quot;</span>.to_string()),
-                }
-            }
-        }
+
+        <span class="macro">assert!</span>(node.insert_attribute(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>).is_ok());
+        <span class="kw">let </span>value = node.get_attribute(<span class="string">&quot;key&quot;</span>).unwrap().unwrap();
+        <span class="macro">assert_eq!</span>(value, <span class="string">&quot;value&quot;</span>);
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_remove_attribute_non_element() {
+    </span><span class="kw">fn </span>remove_attribute_non_element() {
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_document();
-        <span class="kw">let </span>result = node.remove_attribute(<span class="string">&quot;name&quot;</span>.to_string());
+        <span class="kw">let </span>result = node.remove_attribute(<span class="string">&quot;name&quot;</span>);
         <span class="macro">assert!</span>(result.is_err());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_remove_attribute() {
+    </span><span class="kw">fn </span>remove_attribute() {
         <span class="kw">let </span><span class="kw-2">mut </span>attr = HashMap::new();
         attr.insert(<span class="string">&quot;key&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string());
 
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_element(<span class="string">&quot;name&quot;</span>, attr.clone(), HTML_NAMESPACE);
 
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw">_</span>) = node.remove_attribute(<span class="string">&quot;key&quot;</span>.to_string()) {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(result) = node.contains_attribute(<span class="string">&quot;key&quot;</span>.to_string()) {
-                <span class="macro">assert_eq!</span>(result, <span class="bool-val">false</span>);
-            }
-        }
+        <span class="macro">assert!</span>(node.remove_attribute(<span class="string">&quot;key&quot;</span>).is_ok());
+        <span class="kw">let </span>result = node.contains_attribute(<span class="string">&quot;key&quot;</span>).unwrap();
+        <span class="macro">assert!</span>(!result);
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_get_attribute_non_element() {
+    </span><span class="kw">fn </span>get_attribute_non_element() {
         <span class="kw">let </span>node = Node::new_document();
-        <span class="kw">let </span>result = node.get_attribute(<span class="string">&quot;name&quot;</span>.to_string());
+        <span class="kw">let </span>result = node.get_attribute(<span class="string">&quot;name&quot;</span>);
         <span class="macro">assert!</span>(result.is_err());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_get_attribute() {
+    </span><span class="kw">fn </span>get_attribute() {
         <span class="kw">let </span><span class="kw-2">mut </span>attr = HashMap::new();
         attr.insert(<span class="string">&quot;key&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string());
 
         <span class="kw">let </span>node = Node::new_element(<span class="string">&quot;name&quot;</span>, attr.clone(), HTML_NAMESPACE);
 
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(value) = node.get_attribute(<span class="string">&quot;key&quot;</span>.to_string()) {
-            <span class="kw">match </span>value {
-                <span class="prelude-val">None </span>=&gt; <span class="macro">assert!</span>(<span class="bool-val">false</span>),
-                <span class="prelude-val">Some</span>(value_str) =&gt; <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>value_str, <span class="string">&quot;value&quot;</span>.to_string()),
-            }
-        }
+        <span class="kw">let </span>value = node.get_attribute(<span class="string">&quot;key&quot;</span>).unwrap().unwrap();
+        <span class="macro">assert_eq!</span>(value, <span class="string">&quot;value&quot;</span>);
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_get_mut_attribute_non_element() {
+    </span><span class="kw">fn </span>get_mut_attribute_non_element() {
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_document();
-        <span class="kw">let </span>result = node.get_mut_attribute(<span class="string">&quot;key&quot;</span>.to_string());
+        <span class="kw">let </span>result = node.get_mut_attribute(<span class="string">&quot;key&quot;</span>);
         <span class="macro">assert!</span>(result.is_err());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_get_mut_attribute() {
+    </span><span class="kw">fn </span>get_mut_attribute() {
         <span class="kw">let </span><span class="kw-2">mut </span>attr = HashMap::new();
         attr.insert(<span class="string">&quot;key&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string());
 
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_element(<span class="string">&quot;name&quot;</span>, attr.clone(), HTML_NAMESPACE);
 
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(value) = node.get_mut_attribute(<span class="string">&quot;key&quot;</span>.to_string()) {
-            <span class="kw">match </span>value {
-                <span class="prelude-val">None </span>=&gt; <span class="macro">assert!</span>(<span class="bool-val">false</span>),
-                <span class="prelude-val">Some</span>(value_str) =&gt; (<span class="kw-2">*</span>value_str).push_str(<span class="string">&quot; appended&quot;</span>),
-            }
+        <span class="kw">let </span>value = node.get_mut_attribute(<span class="string">&quot;key&quot;</span>).unwrap().unwrap();
+        value.push_str(<span class="string">&quot; appended&quot;</span>);
 
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(value2) = node.get_attribute(<span class="string">&quot;key&quot;</span>.to_string()) {
-                <span class="kw">match </span>value2 {
-                    <span class="prelude-val">None </span>=&gt; <span class="macro">assert!</span>(<span class="bool-val">false</span>),
-                    <span class="prelude-val">Some</span>(value_str) =&gt; <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>value_str, <span class="string">&quot;value appended&quot;</span>),
-                }
-            }
-        }
+        <span class="kw">let </span>value = node.get_attribute(<span class="string">&quot;key&quot;</span>).unwrap().unwrap();
+        <span class="macro">assert_eq!</span>(value, <span class="string">&quot;value appended&quot;</span>);
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_clear_attributes_non_element() {
+    </span><span class="kw">fn </span>clear_attributes_non_element() {
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_document();
         <span class="kw">let </span>result = node.clear_attributes();
         <span class="macro">assert!</span>(result.is_err());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_clear_attributes() {
+    </span><span class="kw">fn </span>clear_attributes() {
         <span class="kw">let </span><span class="kw-2">mut </span>attr = HashMap::new();
         attr.insert(<span class="string">&quot;key&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string());
 
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_element(<span class="string">&quot;name&quot;</span>, attr.clone(), HTML_NAMESPACE);
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw">_</span>) = node.clear_attributes() {
-            <span class="macro">assert_eq!</span>(node.has_attributes(), <span class="bool-val">false</span>);
-        }
+        <span class="macro">assert!</span>(node.clear_attributes().is_ok());
+        <span class="macro">assert!</span>(!node.has_attributes());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_has_attributes_non_element() {
+    </span><span class="kw">fn </span>has_attributes_non_element() {
         <span class="comment">// if node is a non-element, will always return false
         </span><span class="kw">let </span>node = Node::new_document();
-        <span class="macro">assert_eq!</span>(node.has_attributes(), <span class="bool-val">false</span>);
+        <span class="macro">assert!</span>(!node.has_attributes());
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_has_attributes() {
+    </span><span class="kw">fn </span>has_attributes() {
         <span class="kw">let </span>attr = HashMap::new();
 
         <span class="kw">let </span><span class="kw-2">mut </span>node = Node::new_element(<span class="string">&quot;name&quot;</span>, attr.clone(), HTML_NAMESPACE);
         <span class="macro">assert_eq!</span>(node.has_attributes(), <span class="bool-val">false</span>);
 
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw">_</span>) = node.insert_attribute(<span class="string">&quot;key&quot;</span>.to_string(), <span class="string">&quot;value&quot;</span>.to_string()) {
-            <span class="macro">assert_eq!</span>(node.has_attributes(), <span class="bool-val">true</span>);
-        }
+        <span class="macro">assert!</span>(node.insert_attribute(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;value&quot;</span>).is_ok());
+        <span class="macro">assert!</span>(node.has_attributes());
     }
 }
 </code></pre></div></section></main></body></html>

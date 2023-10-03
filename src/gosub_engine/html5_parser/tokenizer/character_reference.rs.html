@@ -517,12 +517,10 @@
 
 <span class="macro">macro_rules! </span>consume_temp_buffer {
     (<span class="macro-nonterminal">$self</span>:expr, <span class="macro-nonterminal">$as_attribute</span>:expr) =&gt; {
-        <span class="kw">for </span>c <span class="kw">in </span><span class="macro-nonterminal">$self</span>.temporary_buffer.clone() {
-            <span class="kw">if </span><span class="macro-nonterminal">$as_attribute </span>{
-                <span class="macro-nonterminal">$self</span>.current_attr_value.push(c);
-            } <span class="kw">else </span>{
-                <span class="macro-nonterminal">$self</span>.consume(c);
-            }
+        <span class="kw">if </span><span class="macro-nonterminal">$as_attribute </span>{
+            <span class="macro-nonterminal">$self</span>.current_attr_value.push_str(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$self</span>.temporary_buffer);
+        } <span class="kw">else </span>{
+            <span class="macro-nonterminal">$self</span>.consumed.push_str(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$self</span>.temporary_buffer);
         }
         <span class="macro-nonterminal">$self</span>.temporary_buffer.clear();
     };
@@ -544,7 +542,8 @@
         <span class="kw">loop </span>{
             <span class="kw">match </span>ccr_state {
                 CcrState::CharacterReference =&gt; {
-                    <span class="self">self</span>.temporary_buffer = <span class="macro">vec!</span>[<span class="string">&#39;&amp;&#39;</span>];
+                    <span class="self">self</span>.temporary_buffer.clear();
+                    <span class="self">self</span>.temporary_buffer.push(<span class="string">&#39;&amp;&#39;</span>);
 
                     <span class="kw">let </span>c = <span class="macro">read_char!</span>(<span class="self">self</span>);
                     <span class="kw">match </span>c {
@@ -793,8 +792,9 @@
                         }
                     }
 
-                    <span class="self">self</span>.temporary_buffer =
-                        <span class="macro">vec!</span>[char::from_u32(char_ref_code).unwrap_or(CHAR_REPLACEMENT)];
+                    <span class="self">self</span>.temporary_buffer.clear();
+                    <span class="kw">let </span>c = char::from_u32(char_ref_code).unwrap_or(CHAR_REPLACEMENT);
+                    <span class="self">self</span>.temporary_buffer.push(c);
                     <span class="macro">consume_temp_buffer!</span>(<span class="self">self</span>, as_attribute);
 
                     <span class="kw">return</span>;
