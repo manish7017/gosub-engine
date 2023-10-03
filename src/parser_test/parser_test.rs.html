@@ -357,6 +357,20 @@
 <a href="#357" id="357">357</a>
 <a href="#358" id="358">358</a>
 <a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>gosub_engine::html5_parser::input_stream::InputStream;
 <span class="kw">use </span>gosub_engine::html5_parser::node::{NodeData, NodeId};
 <span class="kw">use </span>gosub_engine::html5_parser::parser::document::Document;
@@ -369,21 +383,32 @@
 <span class="kw">use </span>std::{fs, io};
 
 <span class="kw">pub struct </span>TestResults {
-    tests: usize,           <span class="comment">// Number of tests (as defined in the suite)
-    </span>assertions: usize, <span class="comment">// Number of assertions (different combinations of input/output per test)
-    </span>succeeded: usize,  <span class="comment">// How many succeeded assertions
-    </span>failed: usize,     <span class="comment">// How many failed assertions
-    </span>failed_position: usize, <span class="comment">// How many failed assertions where position is not correct
-</span>}
+    <span class="doccomment">/// Number of tests (as defined in the suite)
+    </span>tests: usize,
+    <span class="doccomment">/// Number of assertions (different combinations of input/output per test)
+    </span>assertions: usize,
+    <span class="doccomment">/// How many succeeded assertions
+    </span>succeeded: usize,
+    <span class="doccomment">/// How many failed assertions
+    </span>failed: usize,
+    <span class="doccomment">/// How many failed assertions where position is not correct
+    </span>failed_position: usize,
+}
 
 <span class="kw">struct </span>Test {
-    file_path: String,              <span class="comment">// Filename of the test
-    </span>line: usize,                    <span class="comment">// Line number of the test
-    </span>data: String,                   <span class="comment">// input stream
-    </span>errors: Vec&lt;Error&gt;,             <span class="comment">// errors
-    </span>document: Vec&lt;String&gt;,          <span class="comment">// document tree
-    </span>document_fragment: Vec&lt;String&gt;, <span class="comment">// fragment
-</span>}
+    <span class="doccomment">/// Filename of the test
+    </span>file_path: String,
+    <span class="doccomment">/// Line number of the test
+    </span>line: usize,
+    <span class="doccomment">/// input stream
+    </span>data: String,
+    <span class="doccomment">/// errors
+    </span>errors: Vec&lt;Error&gt;,
+    <span class="doccomment">/// document tree
+    </span>document: Vec&lt;String&gt;,
+    <span class="doccomment">/// fragment
+    </span>document_fragment: Vec&lt;String&gt;,
+}
 
 <span class="kw">fn </span>main() -&gt; io::Result&lt;()&gt; {
     <span class="kw">let </span>default_dir = <span class="string">&quot;tests/data/html5lib-tests&quot;</span>.to_string();
@@ -405,11 +430,13 @@
         <span class="kw">let </span>entry = entry<span class="question-mark">?</span>;
         <span class="kw">let </span>path = entry.path();
 
-        <span class="kw">if </span>!path.ends_with(<span class="string">&quot;tests1.dat&quot;</span>) {
+        <span class="comment">// Only run the tests1.dat file for now
+        </span><span class="kw">if </span>!path.ends_with(<span class="string">&quot;tests1.dat&quot;</span>) {
             <span class="kw">continue</span>;
         }
 
-        <span class="kw">if </span>!path.is_file() || path.extension().unwrap() != <span class="string">&quot;dat&quot; </span>{
+        <span class="comment">// Skip dirs and non-dat files
+        </span><span class="kw">if </span>!path.is_file() || path.extension().unwrap() != <span class="string">&quot;dat&quot; </span>{
             <span class="kw">continue</span>;
         }
 
@@ -418,11 +445,8 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>test_idx = <span class="number">1</span>;
         <span class="kw">for </span>test <span class="kw">in </span>tests {
-            <span class="comment">// if test_idx == 3 {
-            </span>run_tree_test(test_idx, <span class="kw-2">&amp;</span>test, <span class="kw-2">&amp;mut </span>results);
-            <span class="comment">// }
-
-            </span>test_idx += <span class="number">1</span>;
+            run_tree_test(test_idx, <span class="kw-2">&amp;</span>test, <span class="kw-2">&amp;mut </span>results);
+            test_idx += <span class="number">1</span>;
         }
     }
 
@@ -430,7 +454,8 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn </span>read_tests(file_path: PathBuf) -&gt; io::Result&lt;Vec&lt;Test&gt;&gt; {
+<span class="doccomment">/// Read given tests file and extract all test data
+</span><span class="kw">fn </span>read_tests(file_path: PathBuf) -&gt; io::Result&lt;Vec&lt;Test&gt;&gt; {
     <span class="kw">let </span>file = File::open(file_path.clone())<span class="question-mark">?</span>;
     <span class="kw">let </span>reader = BufReader::new(file);
 
@@ -446,10 +471,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>section: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt; = <span class="prelude-val">None</span>;
 
     <span class="kw">for </span>(line_num, line) <span class="kw">in </span>reader.lines().enumerate() {
-        <span class="kw">if </span>line.is_err() {
-            <span class="kw">continue</span>;
-        }
-        <span class="kw">let </span>line = line.unwrap();
+        <span class="kw">let </span>line = line<span class="question-mark">?</span>;
 
         <span class="kw">if </span>line.starts_with(<span class="string">&quot;#data&quot;</span>) {
             <span class="kw">if </span>!current_test.data.is_empty()
@@ -459,7 +481,7 @@
                 current_test.data = current_test.data.trim_end().to_string();
                 tests.push(current_test);
                 current_test = Test {
-                    file_path: file_path.to_str().unwrap().to_string(),
+                    file_path: file_path.to_str().unwrap().clone().to_string(),
                     line: line_num,
                     data: <span class="string">&quot;&quot;</span>.to_string(),
                     errors: <span class="macro">vec!</span>[],
@@ -516,28 +538,50 @@
 
     <span class="kw">let </span>old_failed = results.failed;
 
-    <span class="kw">let </span><span class="kw-2">mut </span>is = InputStream::new();
+    <span class="comment">// Do the actual parsing
+    </span><span class="kw">let </span><span class="kw-2">mut </span>is = InputStream::new();
     is.read_from_str(test.data.as_str(), <span class="prelude-val">None</span>);
 
     <span class="kw">let </span><span class="kw-2">mut </span>parser = Html5Parser::new(<span class="kw-2">&amp;mut </span>is);
-    <span class="kw">let </span>(document, _parse_errors) = parser.parse();
+    <span class="kw">let </span>(document, parse_errors) = parser.parse();
 
-    match_document_tree(document, <span class="kw-2">&amp;</span>test.document);
+    <span class="comment">// Check the document tree, which counts as a single assertion
+    </span>results.assertions += <span class="number">1</span>;
+    <span class="kw">if </span>match_document_tree(document, <span class="kw-2">&amp;</span>test.document) {
+        results.succeeded += <span class="number">1</span>;
+    } <span class="kw">else </span>{
+        results.failed += <span class="number">1</span>;
+    }
 
-    <span class="comment">// if parse_errors.len() != test.errors.len() {
-    //     println!(&quot;❌ Unexpected errors found (wanted {}, got {}): &quot;, test.errors.len(), parse_errors.len());
-    //     for want_err in &amp;test.errors {
-    //         println!(&quot;     * Want: &#39;{}&#39; at {}:{}&quot;, want_err.code, want_err.line, want_err.col);
-    //     }
-    //     for got_err in &amp;parse_errors {
-    //         println!(&quot;     * Got: &#39;{}&#39; at {}:{}&quot;, got_err.message, got_err.line, got_err.col);
-    //     }
-    //     results.assertions += 1;
-    //     results.failed += 1;
-    // } else {
-    //     println!(&quot;✅ Found {} errors&quot;, parse_errors.len());
-    // }
-    //
+    <span class="kw">if </span>parse_errors.len() != test.errors.len() {
+        <span class="macro">println!</span>(
+            <span class="string">&quot;❌ Unexpected errors found (wanted {}, got {}): &quot;</span>,
+            test.errors.len(),
+            parse_errors.len()
+        );
+
+        <span class="kw">for </span>want_err <span class="kw">in </span><span class="kw-2">&amp;</span>test.errors {
+            <span class="macro">println!</span>(
+                <span class="string">&quot;     * Want: &#39;{}&#39; at {}:{}&quot;</span>,
+                want_err.code, want_err.line, want_err.col
+            );
+        }
+        <span class="kw">for </span>got_err <span class="kw">in </span><span class="kw-2">&amp;</span>parse_errors {
+            <span class="macro">println!</span>(
+                <span class="string">&quot;     * Got: &#39;{}&#39; at {}:{}&quot;</span>,
+                got_err.message, got_err.line, got_err.col
+            );
+        }
+        results.assertions += <span class="number">1</span>;
+        results.failed += <span class="number">1</span>;
+    } <span class="kw">else </span>{
+        <span class="macro">println!</span>(<span class="string">&quot;✅ Found {} errors&quot;</span>, parse_errors.len());
+    }
+
+    <span class="comment">// For now, we skip the tests that checks for errors as most of the errors do not match
+    // with the actual tests, as these errors as specific from html5lib. Either we reuse them
+    // or have some kind of mapping to our own errors if we decide to use our custom errors.
+
     // // Check each error messages
     // let mut idx = 0;
     // for error in &amp;test.errors {
@@ -574,6 +618,7 @@
     //     idx += 1;
     // }
 
+    // Display additional data if there a failure is found
     </span><span class="kw">if </span>old_failed != results.failed {
         <span class="macro">println!</span>(<span class="string">&quot;----------------------------------------&quot;</span>);
         <span class="macro">println!</span>(<span class="string">&quot;📄 Input stream: &quot;</span>);
@@ -586,18 +631,23 @@
         <span class="kw">for </span>line <span class="kw">in </span><span class="kw-2">&amp;</span>test.document {
             <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, line);
         }
-    }
+
+        <span class="comment">// // End at the first failure
+        // std::process::exit(1);
+    </span>}
 
     <span class="macro">println!</span>(<span class="string">&quot;----------------------------------------&quot;</span>);
 }
 
-<span class="attr">#[allow(dead_code)]
-#[derive(PartialEq)]
+<span class="attr">#[derive(PartialEq)]
 </span><span class="kw">enum </span>ErrorResult {
-    Success,         <span class="comment">// Found the correct error
-    </span>Failure,         <span class="comment">// Didn&#39;t find the error (not even with incorrect position)
-    </span>PositionFailure, <span class="comment">// Found the error, but on an incorrect position
-</span>}
+    <span class="doccomment">/// Found the correct error
+    </span>Success,
+    <span class="doccomment">/// Didn&#39;t find the error (not even with incorrect position)
+    </span>Failure,
+    <span class="doccomment">/// Found the error, but on an incorrect position
+    </span>PositionFailure,
+}
 
 <span class="attr">#[derive(PartialEq)]
 </span><span class="kw">pub struct </span>Error {
@@ -606,33 +656,12 @@
     <span class="kw">pub </span>col: i64,
 }
 
-<span class="doccomment">/**
--   Element nodes must be represented by a &quot;`&lt;`&quot; then the *tag name
-    string* &quot;`&gt;`&quot;, and all the attributes must be given, sorted
-    lexicographically by UTF-16 code unit according to their *attribute
-    name string*, on subsequent lines, as if they were children of the
-    element node.
--   Attribute nodes must have the *attribute name string*, then an &quot;=&quot;
-    sign, then the attribute value in double quotes (&quot;).
--   Text nodes must be the string, in double quotes. Newlines aren&#39;t
-    escaped.
--   Comments must be &quot;`&lt;`&quot; then &quot;`!-- `&quot; then the data then &quot;` --&gt;`&quot;.
--   DOCTYPEs must be &quot;`&lt;!DOCTYPE `&quot; then the name then if either of the
-    system id or public id is non-empty a space, public id in
-    double-quotes, another space an the system id in double-quotes, and
-    then in any case &quot;`&gt;`&quot;.
--   Processing instructions must be &quot;`&lt;?`&quot;, then the target, then a
-    space, then the data and then &quot;`&gt;`&quot;. (The HTML parser cannot emit
-    processing instructions, but scripts can, and the WebVTT to DOM
-    rules can emit them.)
--   Template contents are represented by the string &quot;content&quot; with the
-    children below it.
-**/
-
-</span><span class="kw">fn </span>match_document_tree(document: <span class="kw-2">&amp;</span>Document, expected: <span class="kw-2">&amp;</span>Vec&lt;String&gt;) -&gt; bool {
-    match_node(NodeId::root(), -<span class="number">1</span>, -<span class="number">1</span>, document, expected);
-    <span class="bool-val">true
-</span>}
+<span class="kw">fn </span>match_document_tree(document: <span class="kw-2">&amp;</span>Document, expected: <span class="kw-2">&amp;</span>Vec&lt;String&gt;) -&gt; bool {
+    <span class="comment">// We need a better tree match system. Right now we match the tree based on the (debug) output
+    // of the tree. Instead, we should generate a document-tree from the expected output and compare
+    // it against the current generated tree.
+    </span>match_node(NodeId::root(), -<span class="number">1</span>, -<span class="number">1</span>, document, expected).is_some()
+}
 
 <span class="kw">fn </span>match_node(
     node_idx: NodeId,
@@ -713,7 +742,6 @@
         <span class="string">&quot;⚠️ Unexpected error position &#39;{}&#39; at {}:{} (got: {}:{})&quot;</span>,
         expected_err.code, expected_err.line, expected_err.col, got_err.line, got_err.col
     );
-
     ErrorResult::PositionFailure
 }
 </code></pre></div></section></main></body></html>

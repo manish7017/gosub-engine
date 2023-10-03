@@ -202,6 +202,20 @@
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::html5_parser::node::{Node, NodeData, NodeId};
 <span class="kw">use </span><span class="kw">crate</span>::html5_parser::node_arena::NodeArena;
 <span class="kw">use </span><span class="kw">crate</span>::html5_parser::parser::quirks::QuirksMode;
@@ -275,44 +289,58 @@
 }
 
 <span class="kw">impl </span>Document {
-    <span class="kw">fn </span>display_tree(<span class="kw-2">&amp;</span><span class="self">self</span>, node: <span class="kw-2">&amp;</span>Node, indent: usize, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="kw">let </span><span class="kw-2">mut </span>prefix = <span class="string">&quot; &quot;</span>.repeat(indent);
-        <span class="kw">if </span>!prefix.is_empty() {
-            prefix = <span class="macro">format!</span>(<span class="string">&quot;{}└─ &quot;</span>, prefix);
+    <span class="doccomment">/// Print a node and all its children in a tree-like structure
+    </span><span class="kw">pub fn </span>print_tree(<span class="kw-2">&amp;</span><span class="self">self</span>, node: <span class="kw-2">&amp;</span>Node, prefix: String, last: bool, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) {
+        <span class="kw">let </span><span class="kw-2">mut </span>buffer = prefix.clone();
+        <span class="kw">if </span>last {
+            buffer.push_str(<span class="string">&quot;└─ &quot;</span>);
+        } <span class="kw">else </span>{
+            buffer.push_str(<span class="string">&quot;├─ &quot;</span>);
         }
 
         <span class="kw">match </span><span class="kw-2">&amp;</span>node.data {
             NodeData::Document =&gt; {
-                <span class="macro">writeln!</span>(f, <span class="string">&quot;{}Document&quot;</span>, prefix)<span class="question-mark">?</span>;
+                <span class="kw">_ </span>= <span class="macro">writeln!</span>(f, <span class="string">&quot;{}Document&quot;</span>, buffer);
             }
             NodeData::Text { value } =&gt; {
-                <span class="macro">writeln!</span>(f, <span class="string">&quot;{}{}&quot;</span>, prefix, value)<span class="question-mark">?</span>;
+                <span class="kw">_ </span>= <span class="macro">writeln!</span>(f, <span class="string">&quot;{}\&quot;{}\&quot;&quot;</span>, buffer, value);
             }
             NodeData::Comment { value } =&gt; {
-                <span class="macro">writeln!</span>(f, <span class="string">&quot;{}&lt;!-- {} --&gt;&quot;</span>, prefix, value)<span class="question-mark">?</span>;
+                <span class="kw">_ </span>= <span class="macro">writeln!</span>(f, <span class="string">&quot;{}&lt;!-- {} --&gt;&quot;</span>, buffer, value);
             }
             NodeData::Element { name, attributes } =&gt; {
-                <span class="macro">write!</span>(f, <span class="string">&quot;{}&lt;{}&quot;</span>, prefix, name)<span class="question-mark">?</span>;
+                <span class="kw">_ </span>= <span class="macro">write!</span>(f, <span class="string">&quot;{}&lt;{}&quot;</span>, buffer, name);
                 <span class="kw">for </span>(key, value) <span class="kw">in </span>attributes.iter() {
-                    <span class="macro">write!</span>(f, <span class="string">&quot; {}={}&quot;</span>, key, value)<span class="question-mark">?</span>;
+                    <span class="kw">_ </span>= <span class="macro">write!</span>(f, <span class="string">&quot; {}={}&quot;</span>, key, value);
                 }
-                <span class="macro">writeln!</span>(f, <span class="string">&quot;&gt;&quot;</span>)<span class="question-mark">?</span>;
+                <span class="kw">_ </span>= <span class="macro">writeln!</span>(f, <span class="string">&quot;&gt;&quot;</span>);
             }
         }
 
-        <span class="kw">for </span>child_id <span class="kw">in </span><span class="kw-2">&amp;</span>node.children {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(child) = <span class="self">self</span>.arena.get_node(<span class="kw-2">*</span>child_id) {
-                <span class="self">self</span>.display_tree(child, indent + <span class="number">2</span>, f)<span class="question-mark">?</span>;
-            }
+        <span class="kw">if </span>prefix.len() &gt; <span class="number">40 </span>{
+            <span class="kw">_ </span>= <span class="macro">writeln!</span>(f, <span class="string">&quot;...&quot;</span>);
+            <span class="kw">return</span>;
         }
 
-        <span class="prelude-val">Ok</span>(())
+        <span class="kw">let </span><span class="kw-2">mut </span>buffer = prefix;
+        <span class="kw">if </span>last {
+            buffer.push_str(<span class="string">&quot;   &quot;</span>);
+        } <span class="kw">else </span>{
+            buffer.push_str(<span class="string">&quot;│  &quot;</span>);
+        }
+
+        <span class="kw">let </span>len = node.children.len();
+        <span class="kw">for </span>(i, child) <span class="kw">in </span>node.children.iter().enumerate() {
+            <span class="kw">let </span>child = <span class="self">self</span>.arena.get_node(<span class="kw-2">*</span>child).expect(<span class="string">&quot;Child not found&quot;</span>);
+            <span class="self">self</span>.print_tree(child, buffer.clone(), i == len - <span class="number">1</span>, f);
+        }
     }
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>Document {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="self">self</span>.display_tree(<span class="self">self</span>.get_root(), <span class="number">0</span>, f)
+        <span class="self">self</span>.print_tree(<span class="self">self</span>.get_root(), <span class="string">&quot;&quot;</span>.to_string(), <span class="bool-val">true</span>, f);
+        <span class="prelude-val">Ok</span>(())
     }
 }
 
