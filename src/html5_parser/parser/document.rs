@@ -66,12 +66,10 @@ impl Document {
     pub fn relocate(&mut self, node_id: NodeId, parent_id: NodeId) {
         // Remove the node from its current parent (if any)
         let cur_parent_id = self.arena.get_node(node_id).expect("node not found").parent;
-        if cur_parent_id.is_some() {
-            let cur_parent_id = cur_parent_id.expect("node not found");
-
+        if let Some(parent_node_id) = cur_parent_id {
             let cur_parent = self
                 .arena
-                .get_mut_node(cur_parent_id)
+                .get_mut_node(parent_node_id)
                 .expect("node not found");
             cur_parent.children.retain(|&x| x != node_id);
         }
