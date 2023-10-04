@@ -124,10 +124,7 @@ impl<'a> Html5Parser<'a> {
             // Step 4.9
             // Find the index of the wanted formatting element id in the open elements stack
             let idx = open_elements_find_index!(self, formatting_element_id);
-            let common_ancestor_id = *self
-                .open_elements
-                .get(idx - 1)
-                .expect("node not found");
+            let common_ancestor_id = *self.open_elements.get(idx - 1).expect("node not found");
 
             // Step 4.10
             let mut bookmark_afe = formatting_element_idx_afe;
