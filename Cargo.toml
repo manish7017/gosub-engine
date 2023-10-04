@@ -34,5 +34,3 @@ uuid = { version = "1.4.1", features = ["v4"] }
 [dev-dependencies]
 criterion = { version = "0.4", features = ["html_reports"] }
 test-case = "3.2.1"
-colored = "2.0.4"
-uuid = { version = "1.4.1", features = ["v4"] }
