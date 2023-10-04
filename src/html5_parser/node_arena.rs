@@ -5,7 +5,16 @@ use super::node::NodeId;
 
 pub struct NodeArena {
     nodes: HashMap<NodeId, Node>, // Current nodes
+    order: Vec<NodeId>,           // Order of nodes
     next_id: NodeId,              // next id to use
+}
+
+impl NodeArena {
+    pub(crate) fn print_nodes(&self) {
+        for id in self.order.iter() {
+            println!("({}): {:?}", id, self.nodes.get(id).expect("node"));
+        }
+    }
 }
 
 impl NodeArena {
@@ -14,6 +23,7 @@ impl NodeArena {
         Self {
             nodes: HashMap::new(),
             next_id: Default::default(),
+            order: Vec::new(),
         }
     }
 
@@ -34,6 +44,7 @@ impl NodeArena {
 
         node.id = id;
         self.nodes.insert(id, node);
+        self.order.push(id);
         id
     }
 
@@ -54,15 +65,17 @@ impl NodeArena {
     }
 
     /// Removes the node with the given id from the arena
-    fn remove_node(&mut self, node_id: NodeId) {
+    fn detach_node(&mut self, node_id: NodeId) {
         // Remove children
         if let Some(node) = self.nodes.get_mut(&node_id) {
             for child_id in node.children.clone() {
-                self.remove_node(child_id);
+                self.detach_node(child_id);
             }
         }
 
         if let Some(node) = self.nodes.remove(&node_id) {
+            self.order.retain(|&id| id != node_id);
+
             if let Some(parent_id) = node.parent {
                 if let Some(parent_node) = self.nodes.get_mut(&parent_id) {
                     parent_node.children.retain(|&id| id != node_id);

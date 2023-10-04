@@ -182,7 +182,7 @@ fn run_tree_test(test_idx: usize, test: &Test, results: &mut TestResults) {
 
     if parse_errors.len() != test.errors.len() {
         println!(
-            "❌ Unexpected errors found (wanted {}, got {}): ",
+            "⚠️ Unexpected errors found (wanted {}, got {}): ",
             test.errors.len(),
             parse_errors.len()
         );
